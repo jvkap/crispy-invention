@@ -1,0 +1,62 @@
+<html>
+<head>
+  <style>
+    /* Adicione aqui o seu estilo CSS */
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Gerador de Imagens</h1>
+    <p>Insira um prompt e clique no botão para gerar imagens relacionadas.</p>
+    <input id="prompt" type="text" placeholder="Digite um prompt aqui">
+    <button id="submit" onclick="generateImages()">Gerar Imagens</button>
+    <div id="images"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // Adicione aqui o seu código JavaScript
+    function generateImages() {
+      // Obter o valor do prompt
+      var prompt = document.getElementById("prompt").value;
+      // Verificar se o prompt é válido
+      if (prompt == "") {
+        alert("Por favor, digite um prompt válido.");
+        return;
+      }
+      // Limpar a div de imagens
+      document.getElementById("images").innerHTML = "";
+      // Construir a URL da API
+      var url = "https://stablehorde.net/api/?prompt=" + encodeURIComponent(prompt);
+      // Fazer a chamada à API usando Axios
+      axios.get(url)
+        .then(function (response) {
+          // Obter o resultado da API
+          var result = response.data;
+          // Verificar se o resultado é válido
+          if (result.status == "success") {
+            // Obter a lista de imagens
+            var images = result.images;
+            // Iterar sobre as imagens
+            for (var i = 0; i < images.length; i++) {
+              // Obter a URL da imagem
+              var imageUrl = images[i];
+              // Criar um elemento <img> com a URL da imagem
+              var imageElement = document.createElement("img");
+              imageElement.src = imageUrl;
+              imageElement.alt = "Imagem gerada pelo prompt: " + prompt;
+              // Adicionar o elemento <img> à div de imagens
+              document.getElementById("images").appendChild(imageElement);
+            }
+          } else {
+            // Mostrar uma mensagem de erro
+            alert("Ocorreu um erro ao gerar as imagens: " + result.message);
+          }
+        })
+        .catch(function (error) {
+          // Mostrar uma mensagem de erro
+          alert("Ocorreu um erro ao comunicar com a API: " + error);
+        });
+    }
+  </script>
+</body>
+</html>
